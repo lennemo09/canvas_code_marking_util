@@ -2,6 +2,8 @@ import os
 import importlib.util
 import sys
 
+from submission import Submission
+
 SRC_DIR = ".\submissions"
 NEW_DIR = ".\submissions_renamed"
 LATE_STRING = "_LATE"
@@ -56,10 +58,33 @@ def rename_file(filename, fileparts):
     # New file will be named:
     # ID_Question_Group.py
     # If ID missing, use fullname of student instead.
-    os.rename(old_path, new_path)
-    print(f"Old file: {old_path} -> New file: {new_path}")
+    try:
+        os.rename(old_path, new_path)
+        print(f"Old file: {old_path} -> New file: {new_path}")
+    except FileExistsError:
+        print(f"Cleaned file exists for {fileparts[0]} - Q{fileparts[2]}")
 
+    return new_path
+
+
+def create_submission(path, parts):
+    return Submission(path, name = parts[0], 
+                            id = parts[1], 
+                            question_number = parts[2],
+                            group_number = parts[3])
+
+def create_submissions_from_directory(dir):
+    submissions_list = []
+
+    for filename in os.listdir(SRC_DIR):
+        clean_name = clean_submission_filename(filename=filename)
+        parts = get_filename_parts(clean_name)
+        new_path = rename_file(filename, parts)
+        submissions_list.append(create_submission(new_path, parts))
     
+    return submissions_list
+
+
 def import_module_from_path(path):
     """
     Import .py module using given path.
@@ -72,10 +97,10 @@ def import_module_from_path(path):
 
 
 def main():
-    for filename in os.listdir(SRC_DIR):
-        clean_name = clean_submission_filename(filename=filename)
-        parts = get_filename_parts(clean_name)
-        rename_file(filename, parts)
+    submissions = create_submissions_from_directory(SRC_DIR)
+    for sub in submissions:
+        print(sub)
+    
 
         
 if __name__ == "__main__":
