@@ -3,6 +3,7 @@ from submission import Submission
 
 SRC_DIR = ".\submissions"
 NEW_DIR = ".\submissions_renamed"
+SOLUTIION_DIR = ".\solution"
 LATE_STRING = "_LATE"
 EXTENSION = ".py"
 
@@ -29,7 +30,7 @@ def get_filename_parts(filename):
     # [fullname, ID, question number, group number]
     parts = filename.split('_')
     parts[-2] = parts[-2][1::]
-    parts[-1] = parts[-1][1:2]
+    parts[-1] = int(parts[-1][1:2]) # Group number will be int
     del parts[1:3]
 
     # Checks for missing ID
@@ -39,15 +40,15 @@ def get_filename_parts(filename):
     return parts
 
 
-def rename_file(filename, fileparts):
-    old_path = SRC_DIR + "\\" + filename
+def rename_file(filename, fileparts, source_directory, new_directory):
+    old_path = source_directory + "\\" + filename
 
     if fileparts[1] != 'MISSING ID':
         new_filename = "_".join(fileparts[1:]) + EXTENSION
-        new_path = NEW_DIR + "\\" + fileparts[1]
+        new_path = new_directory + "\\" + fileparts[1]
     else:
         new_filename = fileparts[0] + "_" + "_".join(fileparts[2:]) + EXTENSION
-        new_path = NEW_DIR + "\\" + fileparts[0]
+        new_path = new_directory + "\\" + fileparts[0]
 
     os.makedirs(new_path, exist_ok=True)
     new_path += "\\"  + new_filename
@@ -70,21 +71,21 @@ def create_submission(path, parts):
                             question_number = parts[2],
                             group_number = parts[3])
 
-def create_submissions_from_directory(dir):
+def create_submissions_from_directory(source_dir, new_dir):
     submissions_list = []
 
-    for filename in os.listdir(SRC_DIR):
+    for filename in os.listdir(source_dir):
         clean_name = clean_submission_filename(filename=filename)
         parts = get_filename_parts(clean_name)
-        new_path = rename_file(filename, parts)
+        new_path = rename_file(filename, parts, source_dir, new_dir)
         submissions_list.append(create_submission(new_path, parts))
     
     return submissions_list
 
 def main():
-    submissions = create_submissions_from_directory(SRC_DIR)
+    submissions = create_submissions_from_directory(SRC_DIR, NEW_DIR)
     for sub in submissions:
-        print(sub.get_content_string())
+        print(sub.content)
     
 
         
