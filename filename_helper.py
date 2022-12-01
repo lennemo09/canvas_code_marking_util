@@ -1,7 +1,4 @@
 import os
-import importlib.util
-import sys
-
 from submission import Submission
 
 SRC_DIR = ".\submissions"
@@ -84,22 +81,10 @@ def create_submissions_from_directory(dir):
     
     return submissions_list
 
-
-def import_module_from_path(path):
-    """
-    Import .py module using given path.
-    """
-    spec = importlib.util.spec_from_file_location("submission_module", path)
-    submission_module = importlib.util.module_from_spec(spec)
-    sys.modules["submission_module"] = submission_module
-    spec.loader.exec_module(submission_module)
-    return submission_module
-
-
 def main():
     submissions = create_submissions_from_directory(SRC_DIR)
     for sub in submissions:
-        print(sub)
+        print(sub.get_content_string())
     
 
         
