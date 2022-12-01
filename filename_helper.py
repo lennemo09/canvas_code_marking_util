@@ -71,6 +71,7 @@ def create_submission(path, parts):
                             question_number = parts[2],
                             group_number = parts[3])
 
+
 def create_submissions_from_directory(source_dir, new_dir):
     submissions_list = []
 
@@ -82,12 +83,12 @@ def create_submissions_from_directory(source_dir, new_dir):
     
     return submissions_list
 
+
 def main():
     submissions = create_submissions_from_directory(SRC_DIR, NEW_DIR)
     for sub in submissions:
         print(sub.content)
     
-
         
 if __name__ == "__main__":
     main()
