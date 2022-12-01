@@ -90,10 +90,11 @@ class Solution(Runnable):
             if suppress_stdout:
                 sys.stdout = sys.__stdout__# Unsuppresses stdout from loaded module.
 
-            print("Error encountered while testing submission.")
-            traceback.print_exc()
-        else:
+            output_string += "\n\nERROR encountered while testing submission.\n\n"
+            output_string += traceback.format_exc()
+        finally:
             print(output_string)
+            return output_string
 
 
 
