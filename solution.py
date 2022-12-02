@@ -44,22 +44,27 @@ class Solution(Runnable):
         param: supress_stdout: Supress output such as print statements from the loaded modules.
         """
         try:
-            output_string = ""
+            submission_output_string = ""
+            solution_output_string = ""
             if self.run_from_main: # When the question module's content is not wrapped in a function.
                 for test_input in self.inputs_to_test:
-                    output_string += "\n####################################"
-                    output_string += f"\nTesting with inputs:\n{test_input}"
+                    submission_output_string += "\n####################################"
+                    submission_output_string += f"\nTesting with inputs:\n{test_input}"
+
+                    solution_output_string += "\n####################################"
+                    solution_output_string += f"\nTesting with inputs:\n{test_input}"
                     
                     submission_subprocess = subprocess.run(['python', submission.file_path], text=True, capture_output=True, input=test_input)
                     solution_subprocess = subprocess.run(['python', self.file_path], text=True, capture_output=True, input=test_input)
 
-                    output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}"
+                    submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}"
+                    solution_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}"
 
-                    output_string += "\n\nOutput from submission:\n"
-                    output_string += submission_subprocess.stdout
+                    submission_output_string += "\n\nOutput from submission:\n"
+                    submission_output_string += submission_subprocess.stdout
                     
-                    output_string += "\n\nOutput from solution:\n"
-                    output_string += solution_subprocess.stdout
+                    solution_output_string += "\n\nOutput from solution:\n"
+                    solution_output_string += solution_subprocess.stdout
                 
             else: # When the question module's content is wrapped in a function.
                 submission_module = submission.load_module()
@@ -69,8 +74,11 @@ class Solution(Runnable):
                 submission_function = getattr(submission_module, self.functions_to_test)
 
                 for test_input in self.inputs_to_test:
-                    output_string += "\n####################################"
-                    output_string += f"\nTesting with inputs:\n{test_input}"
+                    submission_output_string += "\n####################################"
+                    submission_output_string += f"\nTesting with inputs:\n{test_input}"
+
+                    solution_output_string += "\n####################################"
+                    solution_output_string += f"\nTesting with inputs:\n{test_input}"
 
                     if suppress_stdout:
                         sys.stdout = open(os.devnull, 'w') # Suppresses stdout from loaded module.
@@ -85,19 +93,23 @@ class Solution(Runnable):
                     if suppress_stdout:
                         sys.stdout = sys.__stdout__# Unsuppresses stdout from loaded module.
 
-                    output_string += f"\nOutput match solution: {submission_output == solution_output}"
-                    output_string += f"\n\nOutput from submission:{submission_output}"
-                    output_string += f"\n\nOutput from solution:{solution_output}"
+                    submission_output_string += f"\nOutput match solution: {submission_output == solution_output}"
+                    solution_output_string += f"\nOutput match solution: {submission_output == solution_output}"
+
+                    submission_output_string += "\n\nOutput from submission:\n"
+                    submission_output_string += submission_output
+                    
+                    solution_output_string += "\n\nOutput from solution:\n"
+                    solution_output_string += solution_output
 
         except Exception as e:
             if suppress_stdout:
                 sys.stdout = sys.__stdout__# Unsuppresses stdout from loaded module.
 
-            output_string += "\n\nERROR encountered while testing submission.\n\n"
-            output_string += traceback.format_exc()
+            submission_output_string += "\n\nERROR encountered while testing submission.\n\n"
+            submission_output_string += traceback.format_exc()
         finally:
-            print(output_string)
-            return output_string
+            return submission_output_string, solution_output_string
 
 
 if __name__ == "__main__":
@@ -123,4 +135,3 @@ if __name__ == "__main__":
                                 [[[1,2],[2,3],[3,4]], [[5,6],[7,8],[9,10]]]]
 
     solution_g1_q4.test_submission(submission_g1_q4)
-
