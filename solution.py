@@ -2,7 +2,9 @@ from runnable import Runnable
 from submission import Submission
 import random, subprocess, sys, os
 import traceback
+
 random.seed(1337)
+
 
 class Solution(Runnable):
     def __init__(self, file_path, question_number, group_number, function_to_test = None, inputs_to_test = [], run_from_main=False, multi_input=False):
@@ -65,6 +67,7 @@ class Solution(Runnable):
 
                 solution_function = getattr(solution_module, self.functions_to_test)
                 submission_function = getattr(submission_module, self.functions_to_test)
+
                 for test_input in self.inputs_to_test:
                     output_string += "\n####################################"
                     output_string += f"\nTesting with inputs:\n{test_input}"
@@ -95,7 +98,6 @@ class Solution(Runnable):
         finally:
             print(output_string)
             return output_string
-
 
 
 if __name__ == "__main__":
