@@ -77,20 +77,27 @@ class FilenameHelper:
 
 
     def create_submission(self, path, parts):
-        return Submission(path, name = parts[0], 
-                                id = parts[1], 
-                                question_number = parts[2],
-                                group_number = parts[3])
+        if len(parts) == 4:
+            return Submission(path, name = parts[0], 
+                                    id = parts[1], 
+                                    question_number = parts[2],
+                                    group_number = parts[3])
+        else:
+            return Submission(path, name = parts[0], 
+                                    id = parts[0], 
+                                    question_number = parts[1],
+                                    group_number = parts[2])
 
 
     def create_submissions_from_raw_directory(self, source_dir, new_dir):
         submissions_list = []
 
         for filename in os.listdir(source_dir):
-            clean_name = self.clean_submission_filename(filename=filename)
-            parts = self.get_filename_parts(clean_name)
-            new_path = self.rename_file(filename, parts, source_dir, new_dir)
-            submissions_list.append(self.create_submission(new_path, parts))
+            if filename[-2:] == '.py':
+                clean_name = self.clean_submission_filename(filename=filename)
+                parts = self.get_filename_parts(clean_name)
+                new_path = self.rename_file(filename, parts, source_dir, new_dir)
+                submissions_list.append(self.create_submission(new_path, parts))
         
         return submissions_list
 
@@ -98,10 +105,11 @@ class FilenameHelper:
         submissions_list = []
 
         for filepath in os.listdir(source_dir):
-            # Remove extension from string
-            filepath_no_extension = filepath[:-3]
-            parts = self.get_filename_parts(filepath_no_extension, cleaned=True, keep_name=keep_name)
-            submissions_list.append(self.create_submission(f'{source_dir}\{filepath}', parts))
+            if filepath[-3:] == '.py':
+                # Remove extension from string
+                filepath_no_extension = filepath[:-3]
+                parts = self.get_filename_parts(filepath_no_extension, cleaned=True, keep_name=keep_name)
+                submissions_list.append(self.create_submission(f'{source_dir}\{filepath}', parts))
 
         return submissions_list
     
