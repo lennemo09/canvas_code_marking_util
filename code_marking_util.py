@@ -9,7 +9,7 @@ from predefined_solutions import solution_dict
 filename_helper = FilenameHelper()
 window = tkinter.Tk()
 window.resizable(False, False)
-window.geometry('1700x900')
+window.geometry('2200x1300')
 window.title('Canvas Code Marking Utility')
 
 current_question_index = IntVar()
@@ -123,26 +123,38 @@ next_question_button.grid(row = 1, column = 1, pady = 5, padx = 5, sticky="nswe"
 body_frame = Frame(window)
 body_frame.grid(row=1,column=0,columnspan=10,rowspan=9)
 
-submission_text_label = Label(body_frame, textvariable=current_submission_filename, wraplength=700, justify=tkinter.LEFT, anchor="w")
-submission_text_label.grid(row = 0, column = 0, pady = 1, padx = 1, sticky="w")
+submission_title_label = Label(body_frame, text="Submission Code:", wraplength=700, justify=tkinter.LEFT, anchor="w")
+submission_title_label.grid(row = 0, column = 0, pady = 1, padx = 1, sticky="w")
 
-submission_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=75, height=45)
+submission_text_label = Label(body_frame, textvariable=current_submission_filename, wraplength=700, justify=tkinter.LEFT, anchor="w")
+submission_text_label.grid(row = 1, column = 0, pady = 1, padx = 1, sticky="w")
+
+submission_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=90, height=72)
 submission_text.insert(tkinter.END, "No file loaded.")
-submission_text.grid(row=1,column=0,pady = 5, padx = 5, rowspan=2, sticky="nswe")
+submission_text.grid(row=2,column=0,pady = 5, padx = 5, rowspan=3, sticky="nswe")
+
+solution_title_label = Label(body_frame, text="Solution Code:", wraplength=700, justify=tkinter.LEFT, anchor="w")
+solution_title_label.grid(row = 0, column = 1, pady = 1, padx = 1, sticky="w")
 
 solution_text_label = Label(body_frame, textvariable=current_solution_filename, wraplength=700, justify=tkinter.LEFT, anchor="w")
-solution_text_label.grid(row = 0, column = 1, pady = 1, padx = 1, sticky="w")
+solution_text_label.grid(row = 1, column = 1, pady = 1, padx = 1, sticky="w")
 
-solution_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=75, height=45)
+solution_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=90, height=72)
 solution_text.insert(tkinter.END, "No file loaded.")
-solution_text.grid(row=1,column=1,pady = 5, padx = 5, rowspan=2, sticky="nswe")
+solution_text.grid(row=2,column=1,pady = 5, padx = 5, rowspan=3, sticky="nswe")
 
-test_submission_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=50, height=20)
+test_submission_label = Label(body_frame, text="Submission Test Output:", wraplength=700, justify=tkinter.LEFT, anchor="w")
+test_submission_label.grid(row = 1, column = 2, pady = 1, padx = 1, sticky="w")
+
+test_submission_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=82, height=30)
 test_submission_text.insert(tkinter.END, "No file loaded.")
-test_submission_text.grid(row=1,column=2,pady = 5, padx = 5, sticky="nswe")
+test_submission_text.grid(row=2,column=2,pady = 5, padx = 5, sticky="nswe")
 
-test_solution_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=50, height=20)
+test_solution_label = Label(body_frame, text="Solution Test Output:", wraplength=700, justify=tkinter.LEFT, anchor="w")
+test_solution_label.grid(row = 3, column = 2, pady = 1, padx = 1, sticky="sw")
+
+test_solution_text = ScrolledText(body_frame, wrap=tkinter.WORD, width=82, height=30)
 test_solution_text.insert(tkinter.END, "No file loaded.")
-test_solution_text.grid(row=2,column=2,pady = 5, padx = 5, sticky="nswe")
+test_solution_text.grid(row=4,column=2,pady = 5, padx = 5, sticky="nswe")
 
 window.mainloop()

@@ -53,14 +53,14 @@ class Solution(Runnable):
                     solution_output_string += f"\nTesting with inputs:\n{test_input}"                    
                     solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
                     solution_output_string += "\n\nOutput from solution:\n"
-                    solution_output_string += solution_subprocess.stdout
+                    solution_output_string += solution_subprocess.stdout +"\n"
 
                     submission_output_string += "####################################"
                     submission_output_string += f"\nTesting with inputs:\n{test_input}"
                     submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
                     submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}"
                     submission_output_string += "\n\nOutput from submission:\n"
-                    submission_output_string += submission_subprocess.stdout
+                    submission_output_string += submission_subprocess.stdout +"\n"
 
             else: # When the question module's content is wrapped in a function.
                 submission_module = func_timeout(RUNTIME_LIMIT, submission.load_module)
@@ -82,7 +82,7 @@ class Solution(Runnable):
                         solution_output = solution_function(*test_input)
 
                     solution_output_string += "\n\nOutput from solution:\n"
-                    solution_output_string += solution_output.__repr__()
+                    solution_output_string += solution_output.__repr__() +"\n"
 
 
                     submission_output_string += "####################################"
@@ -95,7 +95,7 @@ class Solution(Runnable):
 
                     submission_output_string += f"\nOutput match solution: {submission_output == solution_output}"
                     submission_output_string += "\n\nOutput from submission:\n"
-                    submission_output_string += submission_output.__repr__()
+                    submission_output_string += submission_output.__repr__() +"\n"
 
                     if suppress_stdout:
                         sys.stdout = sys.__stdout__# Unsuppresses stdout from loaded module.
