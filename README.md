@@ -1,5 +1,5 @@
 # Canvas Code Marking Utility
-Python utility script to help with marking process of Canvas CMS-submitted Python files.
+Python utility script to help with marking process of Canvas LMS-submitted Python files.
 
 # Dependencies
 This repo will work with must Python 3.4+ environments and only requires 1 external Python package to be installed:
