@@ -49,16 +49,19 @@ class Solution(Runnable):
             solution_output_string = ""
             if self.run_from_main: # When the question module's content is not wrapped in a function.
                 for test_input in self.inputs_to_test:
-                    test_input = self.inputs_to_test[:]
+                    if type(test_input == list):
+                        copy_test_input = test_input[:]
                     solution_output_string += "####################################"
-                    solution_output_string += f"\nTesting with inputs:\n{test_input}"                    
-                    solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
+                    solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"                    
+                    solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
                     solution_output_string += "\n\nOutput from solution:\n"
                     solution_output_string += solution_subprocess.stdout +"\n"
 
+                    if type(test_input == list):
+                        copy_test_input = test_input[:]
                     submission_output_string += "####################################"
-                    submission_output_string += f"\nTesting with inputs:\n{test_input}"
-                    submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
+                    submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
+                    submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
                     submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}".upper()
                     submission_output_string += "\n\nOutput from submission:\n"
                     submission_output_string += submission_subprocess.stdout +"\n"
@@ -71,29 +74,32 @@ class Solution(Runnable):
                 submission_function = getattr(submission_module, self.function_to_test)
 
                 for test_input in self.inputs_to_test:
-                    test_input = self.inputs_to_test[:]
+                    if type(test_input == list):
+                        copy_test_input = test_input[:]
                     if suppress_stdout:
                         sys.stdout = open(os.devnull, 'w') # Suppresses stdout from loaded module.
                     
                     solution_output_string += "####################################"
-                    solution_output_string += f"\nTesting with inputs:\n{test_input}"
+                    solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"
 
                     if not self.multi_input: # If the function only takes 1 argument
-                        solution_output = solution_function(test_input)
+                        solution_output = solution_function(copy_test_input)
                     else: # If the function takes in multiple arguments -> unpack the list of inputs
-                        solution_output = solution_function(*test_input)
+                        solution_output = solution_function(*copy_test_input)
 
                     solution_output_string += "\n\nOutput from solution:\n"
                     solution_output_string += solution_output.__repr__() +"\n"
 
+                    if type(test_input == list):
+                        copy_test_input = test_input[:]
 
                     submission_output_string += "####################################"
-                    submission_output_string += f"\nTesting with inputs:\n{test_input}"
+                    submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
 
                     if not self.multi_input: # If the function only takes 1 argument
-                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=(test_input,))
+                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=(copy_test_input,))
                     else: # If the function takes in multiple arguments -> unpack the list of inputs
-                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=tuple(test_input))
+                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=tuple(copy_test_input))
 
                     submission_output_string += f"\nOutput match solution: {submission_output == solution_output}"
                     submission_output_string += "\n\nOutput from submission:\n"
