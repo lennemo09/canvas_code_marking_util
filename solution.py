@@ -58,7 +58,7 @@ class Solution(Runnable):
                     submission_output_string += "####################################"
                     submission_output_string += f"\nTesting with inputs:\n{test_input}"
                     submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
-                    submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}"
+                    submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}".upper()
                     submission_output_string += "\n\nOutput from submission:\n"
                     submission_output_string += submission_subprocess.stdout +"\n"
 
@@ -89,7 +89,7 @@ class Solution(Runnable):
                     submission_output_string += f"\nTesting with inputs:\n{test_input}"
 
                     if not self.multi_input: # If the function only takes 1 argument
-                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=(test_input))
+                        submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=(test_input,))
                     else: # If the function takes in multiple arguments -> unpack the list of inputs
                         submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=tuple(test_input))
 
@@ -119,36 +119,3 @@ class Solution(Runnable):
             submission_output_string += traceback.format_exc()
         finally:
             return submission_output_string, solution_output_string
-
-
-if __name__ == "__main__":
-    submission_g1_q1 = Submission(file_path=".\submissions_renamed\doquynhtrang\doquynhtrang_1_1.py",
-    name="doquynhtrang",id="doquynhtrang",question_number="1",group_number=1)
-
-    submission_g1_q2 = Submission(file_path=".\submissions_renamed\doquynhtrang\doquynhtrang_2_1.py",
-    name="doquynhtrang",id="doquynhtrang",question_number="2",group_number=1)
-
-    submission_g1_q3a = Submission(file_path=".\submissions_renamed\doquynhtrang\doquynhtrang_3a_1.py",
-    name="doquynhtrang",id="doquynhtrang",question_number="3a",group_number=1)
-
-    submission_g1_q4 = Submission(file_path=".\submissions_renamed\doquynhtrang\doquynhtrang_4_1.py",
-    name="doquynhtrang",id="doquynhtrang",question_number="4",group_number=1)
-
-    solution_g1_q1 = Solution(file_path=".\solution\g1-q1.py", question_number="1", group_number=1, run_from_main=True)
-    solution_g1_q1.inputs_to_test = ["VinUni is a young institution\nand elite\n", "Hi my name is Jack\nthe reaper\n","I really really like pancakes\nwith bacon\n"]
-
-    solution_g1_q2 = Solution(file_path=".\solution\g1-q2.py", question_number="2", group_number=1, run_from_main=True)
-    solution_g1_q2.inputs_to_test = ["5\n20\n80\n100\n90\n50\n"]
-
-    solution_g1_q3a = Solution(file_path=".\solution\g1-q3a.py", question_number="3a", group_number=1, run_from_main=False)
-    solution_g1_q3a.function_to_test = "odds_sum"
-    solution_g1_q3a.inputs_to_test = [[1,3,4,5],[-2,0,2,4,6,8],[1,-3,3,7]]
-
-    solution_g1_q4 = Solution(file_path=".\solution\g1-q4.py", question_number="4", group_number=1, run_from_main=False, multi_input=True)
-    solution_g1_q4.function_to_test = "add_matrix"
-    solution_g1_q4.inputs_to_test = [[[[1,2,3], [1,5,1], [1,2,2]], [[3,1,0], [1,1,2], [2,1,0]]],
-                                [[[4, 3, 3], [2, 6, 3], [3, 3, 2]], [[1,2,3], [1,5,1], [1,2,2]]],
-                                [[[1,2],[2,3],[3,4]], [[5,6],[7,8],[9,10]]]]
-
-    sub_out, sol_out = solution_g1_q3a.test_submission(submission_g1_q3a)
-    print(sub_out)
