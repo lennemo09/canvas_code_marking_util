@@ -49,6 +49,7 @@ class Solution(Runnable):
             solution_output_string = ""
             if self.run_from_main: # When the question module's content is not wrapped in a function.
                 for test_input in self.inputs_to_test:
+                    test_input = self.inputs_to_test[:]
                     solution_output_string += "####################################"
                     solution_output_string += f"\nTesting with inputs:\n{test_input}"                    
                     solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=test_input)
@@ -70,6 +71,7 @@ class Solution(Runnable):
                 submission_function = getattr(submission_module, self.function_to_test)
 
                 for test_input in self.inputs_to_test:
+                    test_input = self.inputs_to_test[:]
                     if suppress_stdout:
                         sys.stdout = open(os.devnull, 'w') # Suppresses stdout from loaded module.
                     
