@@ -11,6 +11,7 @@ window = tkinter.Tk()
 window.resizable(False, False)
 window.geometry('2200x1300')
 window.title('Canvas Code Marking Utility')
+window.iconphoto(False, tkinter.PhotoImage(file='.\icon.png'))
 
 current_question_index = IntVar()
 current_question_index.set(0)
