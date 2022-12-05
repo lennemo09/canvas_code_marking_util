@@ -49,16 +49,22 @@ class Solution(Runnable):
             solution_output_string = ""
             if self.run_from_main: # When the question module's content is not wrapped in a function.
                 for test_input in self.inputs_to_test:
-                    if type(test_input == list):
+                    if type(test_input) == list:
                         copy_test_input = test_input[:]
+                    else:
+                        copy_test_input = test_input
+                        
                     solution_output_string += "####################################"
                     solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"                    
                     solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
                     solution_output_string += "\n\nOutput from solution:\n"
                     solution_output_string += solution_subprocess.stdout +"\n"
 
-                    if type(test_input == list):
+                    if type(test_input) == list:
                         copy_test_input = test_input[:]
+                    else:
+                        copy_test_input = test_input
+
                     submission_output_string += "####################################"
                     submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
                     submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
@@ -74,8 +80,10 @@ class Solution(Runnable):
                 submission_function = getattr(submission_module, self.function_to_test)
 
                 for test_input in self.inputs_to_test:
-                    if type(test_input == list):
+                    if type(test_input) == list:
                         copy_test_input = test_input[:]
+                    else:
+                        copy_test_input = test_input
                     if suppress_stdout:
                         sys.stdout = open(os.devnull, 'w') # Suppresses stdout from loaded module.
                     
@@ -90,8 +98,10 @@ class Solution(Runnable):
                     solution_output_string += "\n\nOutput from solution:\n"
                     solution_output_string += solution_output.__repr__() +"\n"
 
-                    if type(test_input == list):
+                    if type(test_input) == list:
                         copy_test_input = test_input[:]
+                    else:
+                        copy_test_input = test_input
 
                     submission_output_string += "####################################"
                     submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
