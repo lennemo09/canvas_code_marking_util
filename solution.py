@@ -53,7 +53,7 @@ class Solution(Runnable):
                         copy_test_input = test_input[:]
                     else:
                         copy_test_input = test_input
-                        
+
                     solution_output_string += "####################################"
                     solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"                    
                     solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
@@ -111,7 +111,7 @@ class Solution(Runnable):
                     else: # If the function takes in multiple arguments -> unpack the list of inputs
                         submission_output = func_timeout(RUNTIME_LIMIT, submission_function, args=tuple(copy_test_input))
 
-                    submission_output_string += f"\nOutput match solution: {submission_output == solution_output}"
+                    submission_output_string += f"\nOutput match solution: {submission_output == solution_output}".upper()
                     submission_output_string += "\n\nOutput from submission:\n"
                     submission_output_string += submission_output.__repr__() +"\n"
 
