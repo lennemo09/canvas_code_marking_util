@@ -75,6 +75,7 @@ def select_files():
 
     global loaded_submissions
     loaded_submissions = filename_helper.create_submissions_from_directory(submission_directory)
+    current_question_index.set(0)
     update_question_label()
     update_file_content()
     
