@@ -12,7 +12,7 @@ solution_g1_q1.inputs_to_test = ["VinUni is a young institution\nand elite\n",
 # Question 2
 solution_g1_q2 = Solution(file_path=".\solution\g1-q2.py", question_number="2", group_number='1', run_from_main=True)
 solution_g1_q2.inputs_to_test = ["5\n20\n80\n100\n90\n50\n",
-                                "95\n2\n4\n"]
+                                "3\n95\n2\n4\n"]
 
 # Question 3a
 solution_g1_q3a = Solution(file_path=".\solution\g1-q3a.py", question_number="3a", group_number='1', run_from_main=False)
