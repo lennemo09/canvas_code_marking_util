@@ -7,8 +7,19 @@ from func_timeout import func_timeout, FunctionTimedOut
 random.seed(1337)
 RUNTIME_LIMIT = 1 # Seconds
 
+def get_test_file(file_path, code_string):
+    temp_path = file_path + '_temp.py'
+    with open(file_path, "r") as src, open(temp_path, "a") as temp:
+        for line in src:
+            temp.write(line)
+        temp.write('\n' + code_string)
+    return temp_path
+
+def remove_file(file_path):
+    os.remove(file_path)
+
 class Solution(Runnable):
-    def __init__(self, file_path, question_number, group_number, function_to_test = None, inputs_to_test = [], run_from_main=False, multi_input=False):
+    def __init__(self, file_path, question_number, group_number, function_to_test = None, inputs_to_test = [], run_from_main=False, multi_input=False, custom_test = False):
         """
         Solution module class.
         A Solution object is used to test submissions against its own test cases and expected output.
@@ -22,6 +33,7 @@ class Solution(Runnable):
                                calls of each function in functions_to_test list.
         param: run_from_main: Whether the question module's content have code that's supposed to be run in global scope (run in main).
         param: multi_input: Whether the function in the question module requires more than 1 argument.
+        param: custom_test: Whether the module to test requires additional test code. The code to be added is stored in inputs_to_test.
         """
         super().__init__(file_path, question_number, group_number)
 
@@ -30,6 +42,7 @@ class Solution(Runnable):
         
         self.run_from_main = run_from_main
         self.multi_input = multi_input
+        self.custom_test = custom_test
 
     def test_submission(self, submission : Submission, suppress_stdout = True):
         """
@@ -42,35 +55,56 @@ class Solution(Runnable):
         self.multi_input must be set to True if the function takes in more than 1 input as arguments.
 
         param: submission: Submission object containing the submission corresponding to the same question as this Solution.
-        param: supress_stdout: Supress output such as print statements from the loaded modules.
+        param: suppress_stdout: Supress output such as print statements from the loaded modules.
         """
         try:
             submission_output_string = ""
             solution_output_string = ""
             if self.run_from_main: # When the question module's content is not wrapped in a function.
-                for test_input in self.inputs_to_test:
-                    if type(test_input) == list:
-                        copy_test_input = test_input[:]
-                    else:
-                        copy_test_input = test_input
+                if not self.custom_test:
+                    for test_input in self.inputs_to_test:
+                        if type(test_input) == list:
+                            copy_test_input = test_input[:]
+                        else:
+                            copy_test_input = test_input
 
-                    solution_output_string += "####################################"
-                    solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"                    
-                    solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
-                    solution_output_string += "\n\nOutput from solution:\n"
-                    solution_output_string += solution_subprocess.stdout +"\n"
+                        solution_output_string += "####################################"
+                        solution_output_string += f"\nTesting with inputs:\n{copy_test_input}"                    
+                        solution_subprocess = subprocess.run(['python', self.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
+                        solution_output_string += "\n\nOutput from solution:\n"
+                        solution_output_string += solution_subprocess.stdout +"\n"
 
-                    if type(test_input) == list:
-                        copy_test_input = test_input[:]
-                    else:
-                        copy_test_input = test_input
+                        if type(test_input) == list:
+                            copy_test_input = test_input[:]
+                        else:
+                            copy_test_input = test_input
 
-                    submission_output_string += "####################################"
-                    submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
-                    submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
-                    submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}".upper()
-                    submission_output_string += "\n\nOutput from submission:\n"
-                    submission_output_string += submission_subprocess.stdout +"\n"
+                        submission_output_string += "####################################"
+                        submission_output_string += f"\nTesting with inputs:\n{copy_test_input}"
+                        submission_subprocess = subprocess.run(['python', submission.file_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True, input=copy_test_input)
+                        submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}".upper()
+                        submission_output_string += "\n\nOutput from submission:\n"
+                        submission_output_string += submission_subprocess.stdout +"\n"
+                else:                        
+                    for test_code in self.inputs_to_test:
+                        solution_output_string += "####################################"
+                        # solution_output_string += f"\nTesting with inputs:\n{test_code}"
+
+                        test_module_path = get_test_file(self.file_path, test_code)                
+                        solution_subprocess = subprocess.run(['python', test_module_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True)
+                        solution_output_string += "\n\nOutput from solution:\n"
+                        solution_output_string += solution_subprocess.stdout +"\n"
+                        remove_file(test_module_path)
+
+                        submission_output_string += "####################################"
+                        # submission_output_string += f"\nTesting with inputs:\n{test_code}"
+
+                        test_module_path = get_test_file(submission.file_path, test_code)                
+                        submission_subprocess = subprocess.run(['python', test_module_path], text=True, timeout=RUNTIME_LIMIT, capture_output=True)
+                        submission_output_string += f"\nOutput match solution: {submission_subprocess.stdout == solution_subprocess.stdout}".upper()
+                        submission_output_string += "\n\nOutput from submission:\n"
+                        submission_output_string += submission_subprocess.stdout +"\n"
+                        remove_file(test_module_path)
 
             else: # When the question module's content is wrapped in a function.
                 submission_module = func_timeout(RUNTIME_LIMIT, submission.load_module)

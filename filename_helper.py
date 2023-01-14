@@ -1,9 +1,9 @@
 import os
 from submission import Submission
 
-SRC_DIR = ".\submissions"
-NEW_DIR = ".\submissions_renamed"
-SOLUTIION_DIR = ".\solution"
+SRC_DIR = ".\early-submissions"
+NEW_DIR = ".\early-submissions_renamed"
+SOLUTIION_DIR = ".\early-solutions"
 LATE_STRING = "_LATE"
 EXTENSION = ".py"
 
